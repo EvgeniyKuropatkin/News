@@ -9,18 +9,19 @@ import SwiftUI
 
 struct CategoryCardView: View {
     
-    let categoryCard:CategoryCardStruct
+    let categoryCard: StructCategoryList
     
     var body: some View {
         ZStack{
-            Image(categoryCard.image)
-                .frame(width: 300, height: 100)
-                .cornerRadius(20)
-                .opacity(0.4)
-                .padding()
+            
+            Image("NewsBackground")
+            .frame(width: 350, height: 100)
+            .cornerRadius(20)
+            .opacity(0.3)
+            .padding(5)
             
             VStack{
-                Text(categoryCard.category)
+                Text(categoryCard.name)
                     .font(.largeTitle)
                     .bold()
             }
@@ -30,9 +31,8 @@ struct CategoryCardView: View {
 
 #Preview {
     CategoryCardView(
-        categoryCard: CategoryCardStruct(
-            category:"Crime",
-            image: "Crime"
+        categoryCard: StructCategoryList(
+            id: 0, name: "Много новостей"
         )
     )
 }
