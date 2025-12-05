@@ -7,15 +7,15 @@
 
 import Foundation
 
-func formatDate(_ dateString: String) -> String {
+public func formatDate(dateString: String) -> String {
     let inputFormatter = DateFormatter()
-    inputFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-    inputFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+    inputFormatter.dateFormat = "yyyy-MM-dd"
     
     if let date = inputFormatter.date(from: dateString) {
         let outputFormatter = DateFormatter()
         outputFormatter.dateFormat = "dd.MM.yyyy"
-        return outputFormatter.string(from: date)
+        let udate = outputFormatter.string(from: date)
+        return udate
     }
     return "—"
 }

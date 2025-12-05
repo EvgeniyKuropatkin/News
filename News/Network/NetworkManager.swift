@@ -13,9 +13,9 @@ final class NetworkManager {
     
     let decoder = JSONDecoder()
     
-//    private init() {
-//        decoder.dateDecodingStrategy = .iso8601
-//    }
+    private init() {
+        decoder.dateDecodingStrategy = .iso8601
+    }
     
     func getCategory() async throws -> StructCategory{
         
@@ -35,9 +35,9 @@ final class NetworkManager {
         }
     }
     
-    func getNews(id:Int) async throws -> StructNews{
+    func getNews(id: Int, page: Int) async throws -> StructNews{
         
-        let urlNews: String = "https://testtask.sebbia.com/v1/news/categories/\(id)/news"
+        let urlNews: String = "https://testtask.sebbia.com/v1/news/categories/\(id)/news?page=\(page)"
         
         guard let url = URL(string: urlNews) else {throw NetworkError.invalidURL}
         
@@ -46,7 +46,6 @@ final class NetworkManager {
         guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {throw NetworkError.invalidResponse}
         
         do{
-            let decoder = JSONDecoder()
             return try decoder.decode(StructNews.self, from: data)
         }
         catch{

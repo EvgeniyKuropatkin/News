@@ -12,8 +12,10 @@ struct NewsCardView: View {
     let NewsCard: StructNewslist
     
     var body: some View {
+
         ZStack{
-            
+            let date1 = NewsCard.date.split(separator: "T")
+            let date2 = formatDate(dateString: String(date1[0]))
             Image("NewsBackground")
                 .frame(width: 370, height: 300)
                 .cornerRadius(30)
@@ -25,14 +27,14 @@ struct NewsCardView: View {
                     .frame(width: 350)
                     .font(.title)
                     .padding(5)
-                    .lineLimit(3)
+                    .lineLimit(4)
                 
                 Text(NewsCard.shortDescription)
                     .frame(width: 300)
                     .padding(5)
-                    .lineLimit(3)
+                    .lineLimit(5)
                 
-                Text(NewsCard.date)
+                Text(date2)
                     .padding(5)
             }
         }
