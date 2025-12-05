@@ -11,46 +11,12 @@ struct NewsScreen: View{
     
      let id: Int
     
-    ///Переменная для хранения извлеченных данных
-    @State private var itemsNews = [StructNewslist]()
     @State private var page: Int = 0
-    ///Переменная для обозначения загрузки
-    @State private var isLoading = false
-    @State private var lastFetchedPage = -1
     
-    @State private var activeNewsID: Int?
+    @EnvironmentObject var envNews: EnvNews
     
-    @State private var lastNewsID: Int?
+    @Environment(\.dismiss) var dismiss
     
-    
-    
-    func loadNews(id: Int, page: Int ){
-        guard !isLoading else { return }
-        isLoading = true
-        Task {
-            do {
-                print("id \(id), page \(page)")
-                let News = try await NetworkManager.shared.getNews(id: id, page: page).list
-                
-                await MainActor.run {
-                    if News.isEmpty{
-                        self.page = lastFetchedPage
-                    }
-                    else{
-                        self.itemsNews.append(contentsOf: News)
-                        lastNewsID = self.itemsNews.last?.id
-                        lastFetchedPage = page
-                    }
-                    self.isLoading = false
-                }
-            } catch {
-                await MainActor.run {
-                    print("Ошибка: \(error)")
-                    self.isLoading = false
-                }
-            }
-        }
-    }
     
     
     var body: some View {
@@ -64,13 +30,13 @@ struct NewsScreen: View{
                     .scaledToFill()
                 
                 ScrollView(.vertical){
-                    ForEach(itemsNews){news in
+                    ForEach(envNews.itemsNews){news in
                         NavigationLink(destination: {DetailsScreen(id: news.id)},
                                        label:{NewsCardView(NewsCard: news)}
                         )
                     }
                     .overlay(alignment: .bottom){
-                        if isLoading{
+                        if envNews.isLoading{
                             ProgressView()
                                 .offset(y:30)
                         }
@@ -78,16 +44,31 @@ struct NewsScreen: View{
                     .padding()
                     .scrollTargetLayout()
                 }
-                .scrollPosition(id: $activeNewsID, anchor: .bottomTrailing)
-                .onChange(of: activeNewsID, {oldValue, newValue in
-                    if newValue == lastNewsID ?? -1{
+                .scrollPosition(id: $envNews.activeNewsID, anchor: .bottomTrailing)
+                .onChange(of: envNews.activeNewsID, {oldValue, newValue in
+                    if newValue == envNews.lastNewsID {
                         page += 1
-                        loadNews(id: id, page: page)
+                        envNews.loadNews(id: id, page: page)
                     }
                 })
                 .onAppear {
-                    if itemsNews.isEmpty{ loadNews(id: id, page: page)}
+                    envNews.loadNews(id: id, page: page)
                 }
+                .onDisappear{
+                    envNews.itemsNews = []
+                }
+            }
+            .alert(
+                "Новостей нет!",
+                isPresented: $envNews.isNews
+            ) {
+                Button() {
+                    dismiss()
+                } label: {
+                    Text("Перейти к выбору категорий")
+                }
+            } message: {
+                Text("Зайдите позже")
             }
         }
     }

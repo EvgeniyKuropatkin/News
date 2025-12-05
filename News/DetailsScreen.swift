@@ -11,31 +11,7 @@ struct DetailsScreen: View{
     
     let id: Int
     
-    ///Переменная для хранения извлеченных данных
-    @State var itemsDetail : StructNewsDetail? =  nil
-    
-    ///Переменная для обозначения загрузки
-    @State private var isLoading = false
-    
-    
-    private func loadDetails(id: Any){
-        guard !isLoading else { return }
-        isLoading = true
-        Task {
-            do {
-                itemsDetail = try await NetworkManager.shared.getDetails(id: id as! Int).news
-                await MainActor.run {
-                    self.isLoading = false
-                }
-            } catch {
-                await MainActor.run {
-                    print("Ошибка: \(error)")
-                    self.isLoading = false
-                }
-            }
-        }
-    }
-    
+    @EnvironmentObject var envNews: EnvNews
     
     var body: some View {
         NavigationStack {
@@ -49,21 +25,21 @@ struct DetailsScreen: View{
                 .padding(5)
                 
                 VStack{
-                    Text(itemsDetail?.title ?? "")
+                    Text(envNews.itemsDetail?.title ?? "")
                         .font(.title)
                         .padding()
                     
-                    Text(itemsDetail?.shortDescription ?? "")
+                    Text(envNews.itemsDetail?.shortDescription ?? "")
                         .padding()
                     ScrollView(.vertical, showsIndicators: false){
-                        Text(itemsDetail?.fullDescription ?? "")
+                        Text(envNews.itemsDetail?.fullDescription ?? "")
                             .font(.title)
                             .padding(5)
                     }
                 }
             }
             .onAppear {
-                loadDetails(id: id)
+                envNews.loadDetails(id: id)
             }
         }
         

@@ -9,31 +9,7 @@ import SwiftUI
 
 struct CategoryScreen: View {
     
-    ///Переменная для хранения извлеченных данных
-    @State private var itemsCategory = [StructCategoryList]()
-    
-    ///Переменная для обозначения загрузки
-    @State private var isLoading = false
-    
-    private func loadCategory(){
-        guard !isLoading else { return }
-        isLoading = true
-        Task {
-            do {
-                itemsCategory = try await NetworkManager.shared.getCategory().list
-                await MainActor.run {
-                    self.isLoading = false
-                }
-            } catch {
-                await MainActor.run {
-                    print("Ошибка: \(error)")
-                    self.isLoading = false
-                }
-            }
-        }
-    }
-    
-
+    @EnvironmentObject var envNews: EnvNews
     
     var body: some View {
         NavigationStack {
@@ -44,7 +20,7 @@ struct CategoryScreen: View {
                     .scaledToFill()
                 
                 ScrollView(.vertical, showsIndicators: false){
-                    ForEach(itemsCategory){category in
+                    ForEach(envNews.itemsCategory){category in
                         NavigationLink(destination: {NewsScreen(id: category.id)},
                                        label:{CategoryCardView(categoryCard: category)}
                         )
@@ -52,7 +28,7 @@ struct CategoryScreen: View {
                 }
             }
             .onAppear {
-                loadCategory()
+                envNews.loadCategory()
             }
         }
     }
@@ -60,4 +36,5 @@ struct CategoryScreen: View {
 
 #Preview {
     CategoryScreen()
+        .environmentObject(EnvNews())
 }
