@@ -5,48 +5,48 @@
 //  Created by 1111 on 04.12.2025.
 //
 
+import Foundation
 import SwiftUI
-
+///Экран для показа подробностей о новости
 struct DetailsScreen: View{
-    
+    ///Идентификационный номер для получения подробностей о новости
     let id: Int
     
     @EnvironmentObject var envNews: EnvNews
     
     var body: some View {
-        NavigationStack {
+        
+        VStack(spacing: 32){
             
-            ZStack{
+            Text(envNews.itemsDetail?.title ?? "")
+                .font(.title)
+            
+            Text(envNews.itemsDetail?.shortDescription ?? "")
+            
+            ScrollView(.vertical){
                 
-                Image("NewsBackground")
-                    .resizable()
-                .cornerRadius(20)
-                .opacity(0.3)
-                .padding(5)
-                
-                VStack{
-                    Text(envNews.itemsDetail?.title ?? "")
-                        .font(.title)
-                        .padding()
-                    
-                    Text(envNews.itemsDetail?.shortDescription ?? "")
-                        .padding()
-                    ScrollView(.vertical, showsIndicators: false){
-                        Text(envNews.itemsDetail?.fullDescription ?? "")
-                            .font(.title)
-                            .padding(5)
-                    }
-                }
-            }
-            .onAppear {
-                envNews.loadDetails(id: id)
+                Text(convertHtmlToAttributedString(htmlString: envNews.itemsDetail?.fullDescription ?? "", fontSize: 20) ?? "Не удалось найти подробности о данной новости")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
+        .background{
+            
+            Image("NewsBackground")
+                .resizable()
+                .opacity(0.2)
+                .ignoresSafeArea()
+        }
+        .onAppear {
+            
+            envNews.loadDetails(id: id)
+            
+        }
+        
         
     }
 }
 
-
 #Preview {
-    DetailsScreen(id: 11)
+    DetailsScreen(id: 9)
+        .environmentObject(EnvNews())
 }

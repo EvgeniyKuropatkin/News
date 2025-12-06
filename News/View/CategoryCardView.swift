@@ -6,26 +6,26 @@
 //
 
 import SwiftUI
-
+///Структура представления карточки категории
 struct CategoryCardView: View {
-    
+    ///Переменная для хранения данных о категории
     let categoryCard: StructCategoryList
     
     var body: some View {
-        ZStack{
-            
-            Image("NewsBackground")
-            .frame(width: 350, height: 100)
-            .cornerRadius(20)
-            .opacity(0.3)
-            .padding(5)
-            
-            VStack{
-                Text(categoryCard.name)
-                    .font(.largeTitle)
-                    .bold()
-            }
+        VStack{
+            Text(categoryCard.name)
+                .font(.largeTitle)
+                .padding()
+                .bold()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background{
+            Image("NewsBackground")
+                .resizable()
+                .cornerRadius(20)
+                .opacity(0.3)
+        }
+        
     }
 }
 

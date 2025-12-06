@@ -6,17 +6,17 @@
 //
 
 import Foundation
-
+///Класс для работы с API
 final class NetworkManager {
-    
+    ///Общедоступный экземпляр `NetworkManager`
     static let shared = NetworkManager()
-    
+    ///Декодер JSON
     let decoder = JSONDecoder()
-    
+    /// Приватный инициализатор, предотвращающий создание дополнительных экземпляров.
     private init() {
         decoder.dateDecodingStrategy = .iso8601
     }
-    
+    ///Функция получения данных для категорий
     func getCategory() async throws -> StructCategory{
         
         let urlCategory: String = "https://testtask.sebbia.com/v1/news/categories"
@@ -34,7 +34,7 @@ final class NetworkManager {
             throw NetworkError.invadidData
         }
     }
-    
+    ///Функция для получения данных о новости
     func getNews(id: Int, page: Int) async throws -> StructNews{
         
         let urlNews: String = "https://testtask.sebbia.com/v1/news/categories/\(id)/news?page=\(page)"
@@ -52,7 +52,7 @@ final class NetworkManager {
             throw NetworkError.invadidData
         }
     }
-    
+    ///Функция для получения детальных данных о новости
     func getDetails(id:Int) async throws -> StructNewsDetails{
         
         let urlNewsDetails: String = "https://testtask.sebbia.com/v1/news/details?id=\(id)"

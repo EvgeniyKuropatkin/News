@@ -6,35 +6,28 @@
 //
 
 import SwiftUI
-
+///Экран для показа списка новостей выбранной категории
 struct NewsScreen: View{
-    
+    ///Идентификационный номер по которому обращаемся к подробностям
      let id: Int
-    
+    ///Номер страницы
     @State private var page: Int = 0
     
     @EnvironmentObject var envNews: EnvNews
-    
+    ///Переменная для закрытия экрана показа новостей и перехода к экрану выбору категорий
     @Environment(\.dismiss) var dismiss
-    
-    
     
     var body: some View {
         NavigationStack {
-            
-            ZStack{
-                
-                Image("NewsBackground")
-                    .resizable()
-                    .opacity(0.2)
-                    .scaledToFill()
-                
-                ScrollView(.vertical){
+            ScrollView(.vertical){
                     ForEach(envNews.itemsNews){news in
-                        NavigationLink(destination: {DetailsScreen(id: news.id)},
-                                       label:{NewsCardView(NewsCard: news)}
+                        NavigationLink(
+                            destination: { DetailsScreen(id: news.id) },
+                            label: { NewsCardView(NewsCard: news) }
                         )
+                        .padding()
                     }
+                
                     .overlay(alignment: .bottom){
                         if envNews.isLoading{
                             ProgressView()
@@ -44,20 +37,35 @@ struct NewsScreen: View{
                     .padding()
                     .scrollTargetLayout()
                 }
-                .scrollPosition(id: $envNews.activeNewsID, anchor: .bottomTrailing)
-                .onChange(of: envNews.activeNewsID, {oldValue, newValue in
-                    if newValue == envNews.lastNewsID {
-                        page += 1
-                        envNews.loadNews(id: id, page: page)
+            
+                .background{
+                    Image("NewsBackground")
+                        .resizable()
+                        .opacity(0.2)
+                        .scaledToFill()
+                        .ignoresSafeArea()
+                }
+            
+                .scrollPosition(
+                    id: $envNews.activeNewsID,
+                    anchor: .bottomTrailing
+                )
+            
+                .onChange(
+                    of: envNews.activeNewsID, {
+                        oldValue, newValue in
+                        if newValue == envNews.lastNewsID {
+                            page += 1
+                            envNews.loadNews(id: id, page: page)
+                        }
                     }
-                })
+                )
+            
                 .onAppear {
                     envNews.loadNews(id: id, page: page)
                 }
-                .onDisappear{
-                    envNews.itemsNews = []
-                }
             }
+        
             .alert(
                 "Новостей нет!",
                 isPresented: $envNews.isNews
@@ -70,12 +78,13 @@ struct NewsScreen: View{
             } message: {
                 Text("Зайдите позже")
             }
-        }
+        
     }
 }
 
 
 #Preview {
     NewsScreen(id: 0)
+        .environmentObject(EnvNews())
 }
 

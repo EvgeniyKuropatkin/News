@@ -18,4 +18,3 @@ enum NetworkError: String, Error{
     ///Невалидные данные
     case invadidData = "InvalidData"
 }
-
