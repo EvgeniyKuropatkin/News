@@ -8,6 +8,17 @@
 import Foundation
 import UIKit
 import Combine
+
+///Функция помогающая не добавлять дубликаты
+func hasIntersection(list1: [StructNewslist], list2: [StructNewslist]) -> Bool {
+    for item in list1 {
+        if list2.contains(item) {
+            return true
+        }
+    }
+    return false
+}
+
 ///Публичная функция для форматирования даты
 public func formatDate(dateString: String) -> String {
     let inputFormatter = DateFormatter()

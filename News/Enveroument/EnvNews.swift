@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 ///Класс подписанный на протокол ObservableObject для использования наблюдаемых объектов и быстрой передачи данных разным View
-final class EnvNews: ObservableObject {
+final class EnvNews: ObservableObject{
     ///Переменная для хранения извлеченных данных о категории новостей
     @Published var itemsCategory = [StructCategoryList]()
     ///Переменная для обозначения загрузки
@@ -50,7 +50,7 @@ final class EnvNews: ObservableObject {
             do {
                 let News:[StructNewslist] = try await NetworkManager.shared.getNews(id: id, page: page).list
                 
-                if !News.isEmpty && !itemsNews.starts(with: News){
+                if !News.isEmpty && !hasIntersection(list1: itemsNews, list2: News){
                     itemsNews.append(contentsOf: News)
                     lastNewsID = itemsNews.last?.id
                     lastFetchedPage = page

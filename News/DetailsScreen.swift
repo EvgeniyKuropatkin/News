@@ -16,18 +16,19 @@ struct DetailsScreen: View{
     
     var body: some View {
         
-        VStack(spacing: 32){
+        VStack{
             
             Text(envNews.itemsDetail?.title ?? "")
                 .font(.title)
-            
+                .padding()
             Text(envNews.itemsDetail?.shortDescription ?? "")
-            
+                .padding()
             ScrollView(.vertical){
                 
                 Text(convertHtmlToAttributedString(htmlString: envNews.itemsDetail?.fullDescription ?? "", fontSize: 20) ?? "Не удалось найти подробности о данной новости")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .padding()
         }
         .background{
             
